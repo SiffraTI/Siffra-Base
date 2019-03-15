@@ -1,0 +1,12 @@
+MANIFEST
+README
+LICENSE
+Todo
+Changes
+MANIFEST.SKIP
+t/pod-coverage.t
+t/pod.t
+t/perlcritic.t
+Makefile.PL
+lib/Siffra/Base.pm
+t/001_load.t
