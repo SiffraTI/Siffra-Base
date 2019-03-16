@@ -3,41 +3,55 @@ package Siffra::Base;
 use 5.014;
 use strict;
 use warnings;
+use Carp;
 use utf8;
 use Data::Dumper;
 use Log::Any qw($log);
 use Scalar::Util qw(blessed);
- 
-BEGIN {
+
+$| = 1;    #autoflush
+
+use constant {
+    FALSE => 0,
+    TRUE  => 1
+};
+
+BEGIN
+{
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '0.01';
-    @ISA         = qw(Exporter);
+    $VERSION = '0.01';
+    @ISA     = qw(Exporter);
+
     #Give a hoot don't pollute, do not export more than needed by default
     @EXPORT      = qw();
     @EXPORT_OK   = qw();
     %EXPORT_TAGS = ();
-}
- 
 
-#################### subroutine header begin ####################
+    $SIG{ __DIE__ } = sub {
+        $log->info( 'Entrando em __DIE__', { package => __PACKAGE__ } );
+        if ( $^S )
+        {
+            $log->debug( 'Entrando em __DIE__ eval {}', { package => __PACKAGE__ } );
 
-=head2 sample_function
+            # We're in an eval {} and don't want log
+            # this message but catch it later
+            return;
+        } ## end if ( $^S )
 
- Usage     : How to use this function/method
- Purpose   : What it does
- Returns   : What it returns
- Argument  : What it wants to know
- Throws    : Exceptions and other anomolies
- Comment   : This is a sample subroutine header.
-           : It is polite to include more pod and fewer comments.
+        ( my $message = $_[ 0 ] ) =~ s/\n|\r//g;
+        $log->fatal( $message, { package => __PACKAGE__ } );
 
-See Also   :
+        die Dumper @_;    # Now terminate really
+    };
 
-=cut
-
-#################### subroutine header end ####################
-
+    $SIG{ __WARN__ } = sub {
+        p @_;
+        state $count = 0;
+        ( my $message = $_[ 0 ] ) =~ s/\n|\r//g;
+        $log->warn( $message, { package => __PACKAGE__, count => $count++, global_phase => ${^GLOBAL_PHASE} } );
+    };
+} ## end BEGIN
 
 =head2 C<new()>
  
@@ -53,26 +67,26 @@ See Also   :
               parameters.
  
 =cut
- 
+
 sub new
 {
-    my ($class, %parameters) = @_;
+    my ( $class, %parameters ) = @_;
 
     my $self = {};
- 
-    $self = bless ($self, ref ($class) || $class);
+
+    $self = bless( $self, ref( $class ) || $class );
 
     $log->info( "new", { progname => $0, pid => $$, perl_version => $], package => __PACKAGE__ } );
- 
+
     $self->_initialize( %parameters );
     return $self;
-}
- 
+} ## end sub new
+
 sub _initialize()
 {
     my ( $self, %parameters ) = @_;
     $log->info( "_initialize", { package => __PACKAGE__ } );
-} ## end sub _initialize
+}
 
 sub END
 {
@@ -105,7 +119,9 @@ sub AUTOLOAD
 sub DESTROY
 {
     my ( $self, %parameters ) = @_;
+
     $log->info( 'DESTROY', { package => __PACKAGE__, GLOBAL_PHASE => ${^GLOBAL_PHASE} } );
+
     return if ${^GLOBAL_PHASE} eq 'DESTRUCT';
 
     if ( blessed( $self ) && $self->isa( __PACKAGE__ ) )
@@ -117,18 +133,17 @@ sub DESTROY
         # TODO
     }
 } ## end sub DESTROY
- 
+
 #################### main pod documentation begin ###################
 ## Below is the stub of documentation for your module.
 ## You better edit it!
- 
 
 =encoding UTF-8
 
 
 =head1 NAME
 
-Siffra::Base - Module abstract (<= 44 characters) goes here
+Siffra::Base - Siffra Base Module
 
 =head1 SYNOPSIS
 
@@ -179,10 +194,10 @@ LICENSE file included with this module.
 perl(1).
  
 =cut
- 
+
 #################### main pod documentation end ###################
- 
 
 1;
+
 # The preceding line will help the module return a true value
 

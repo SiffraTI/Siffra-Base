@@ -12,8 +12,8 @@ my %WriteMakefileArgs = (
     AUTHOR           => 'Luiz Benevenuto (luiz@siffra.com.br)',
     MIN_PERL_VERSION => '5.014',
     LICENSE          => 'perl',
-    INSTALLDIRS      => ($] < 5.011 ? 'perl' : 'site'),
-    PREREQ_PM => {
+    INSTALLDIRS      => ( $] < 5.011 ? 'perl' : 'site' ),
+    PREREQ_PM        => {
         'strict'             => 0,
         'warnings'           => 0,
         'Test::Simple'       => 0.44,
@@ -24,13 +24,14 @@ my %WriteMakefileArgs = (
         'Log::Any'           => 0,
         'Scalar::Util'       => 0,
         'Data::Dumper'       => 0,
+        'Carp'               => 0,
     },
     BUILD_REQUIRES => {
         'Test::More'          => 0,
         'ExtUtils::MakeMaker' => 0,
     },
     (
-        eval { ExtUtils::MakeMaker->VERSION(6.46) }
+        eval { ExtUtils::MakeMaker->VERSION( 6.46 ) }
         ? ()
         : (
             META_MERGE => {
@@ -51,7 +52,7 @@ my %WriteMakefileArgs = (
         )
     ),
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean => { FILES => 'Siffra-Base-* *.old *.bak' },
+    clean => { FILES    => 'Siffra-Base-* *.old *.bak' },
 );
 
-WriteMakefile(%WriteMakefileArgs);
+WriteMakefile( %WriteMakefileArgs );
