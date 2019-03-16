@@ -4,8 +4,10 @@ use 5.014;
 use strict;
 use warnings;
 use Carp;
+$Carp::Verbose = 1;
 use utf8;
 use Data::Dumper;
+use DDP;
 use Log::Any qw($log);
 use Scalar::Util qw(blessed);
 
@@ -46,7 +48,6 @@ BEGIN
     };
 
     $SIG{ __WARN__ } = sub {
-        p @_;
         state $count = 0;
         ( my $message = $_[ 0 ] ) =~ s/\n|\r//g;
         $log->warn( $message, { package => __PACKAGE__, count => $count++, global_phase => ${^GLOBAL_PHASE} } );
@@ -78,7 +79,6 @@ sub new
 
     $log->info( "new", { progname => $0, pid => $$, perl_version => $], package => __PACKAGE__ } );
 
-    $self->_initialize( %parameters );
     return $self;
 } ## end sub new
 
@@ -112,8 +112,16 @@ sub AUTOLOAD
 {
     my ( $self, @parameters ) = @_;
     our $AUTOLOAD;
-
     return if ( $AUTOLOAD =~ /DESTROY/ );
+
+    # Remove qualifier from original method name...
+    my $called = $AUTOLOAD =~ s/.*:://r;
+
+    # Is there an attribute of that name?
+    die "No such attribute: $called" unless exists $self->{ $called };
+
+    # If so, return it...
+    return $self->{ $called };
 } ## end sub AUTOLOAD
 
 sub DESTROY
