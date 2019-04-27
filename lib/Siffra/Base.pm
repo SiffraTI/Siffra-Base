@@ -126,7 +126,7 @@ sub AUTOLOAD
     my $called = $AUTOLOAD =~ s/.*:://r;
 
     # Is there an attribute of that name?
-    die "No such attribute: $called" unless exists $self->{ $called };
+    die "No such attribute ****[ $called ]****" unless exists $self->{ $called };
 
     # If so, return it...
     return $self->{ $called };

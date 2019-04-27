@@ -40,12 +40,12 @@ my %WriteMakefileArgs = (
                 resources      => {
                     homepage   => 'https://siffra.com.br',
                     repository => {
-                        url  => 'git@github.com:lbenevenuto/Siffra-Base.git',
-                        web  => 'https://github.com/lbenevenuto/Siffra-Base',
+                        url  => 'git@github.com:SiffraTI/Siffra-Base.git',
+                        web  => 'https://github.com/SiffraTI/Siffra-Base',
                         type => 'git',
                     },
                     bugtracker => {
-                        web => 'https://github.com/lbenevenuto/Siffra-Base/issues',
+                        web => 'https://github.com/SiffraTI/Siffra-Base/issues',
                     },
                 },
             }
