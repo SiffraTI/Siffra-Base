@@ -52,7 +52,7 @@ BEGIN
         $log->fatal( $message, { package => __PACKAGE__ } );
 
         p @_;
-        die;    # Now terminate really
+        die Dumper @_;    # Now terminate really
     };
 
     $SIG{ __WARN__ } = sub {
